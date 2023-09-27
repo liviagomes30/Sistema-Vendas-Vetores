@@ -54,31 +54,35 @@ struct TpVendasProd
 };
 
 void LimparSaida(void){
-	int x1 = 37, x2 = 77, y1 = 7, y2 = 20, i, j;
+	int x1 = 37, x2 = 88, y1 = 7, y2 = 22, i, j;
 	for(i=x1; i<x2; i++)
 		for(j=y1; j<y2; j++){
 			gotoxy(i,j);
 			printf(" ");
 		}
 }
+
 
 void LimparMsg(void){
-	int x1 = 15, x2 = 76, y1 = 23, y2 = 25, i, j;
-	for(i=x1; i<x2; i++)
-		for(j=y1; j<y2; j++){
-			gotoxy(i,j);
-			printf("  ");
-		}
-}
-
-void LimparMenu(void){
-	int x1 = 8, x2 = 35, y1 = 9, y2 = 20, i, j;
+	int x1 = 14, x2 = 88, y1 = 25, y2 = 28, i, j;
 	for(i=x1; i<x2; i++)
 		for(j=y1; j<y2; j++){
 			gotoxy(i,j);
 			printf(" ");
 		}
 }
+
+
+void LimparMenu(void){
+	int x1 = 4, x2 = 35, y1 = 7, y2 = 22, i, j;
+	for(i=x1; i<x2; i++)
+		for(j=y1; j<y2; j++){
+			gotoxy(i,j);
+			printf(" ");
+		}
+}
+
+
 
 
 int validarCPF(char cpf[11])
@@ -172,6 +176,20 @@ int BuscaCod(int Cod, TpFornecedores Fornecedor[], int TLF) {
     }
 }
 
+int BuscaCodProd(int Cod, TpProdutos Produto[], int TLP) {
+    int pos = 0;
+    
+    while (pos < TLP && Cod != Produto[pos].CodProd) {
+        pos++;
+    }
+    
+    if (pos == TLP) {
+        return -1; // Código não encontrado
+    } else {
+        return pos; // Retorna a posição do código encontrado
+    }
+}
+
 void CadastroClientes(TpClientes Cliente[], int &TLC)
 {
 	char op, cpfaux[11];
@@ -198,14 +216,14 @@ void CadastroClientes(TpClientes Cliente[], int &TLC)
 				printf("Nome do cliente: ");
 				fflush(stdin);
 				gets(Cliente[TLC].NomeCli);
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Cadastro realizado com sucesso!");
 				Sleep(1000);
 				LimparMsg();
 				TLC++;
 			}
 			else{
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Cliente ja cadastrado!");
 				Sleep(1000);
 				LimparMsg();
@@ -213,7 +231,7 @@ void CadastroClientes(TpClientes Cliente[], int &TLC)
 			}
 		}
 		else{
-			gotoxy(15,23);
+			gotoxy(15,26);
 			printf("CPF invalido!");
 			Sleep(1000);
 			LimparMsg();
@@ -221,7 +239,7 @@ void CadastroClientes(TpClientes Cliente[], int &TLC)
 		}
 		
 		LimparSaida();
-		gotoxy(15,23);
+		gotoxy(15,26);
 		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 		Sleep(1000);
 		op = toupper(getch());	
@@ -298,7 +316,7 @@ void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
 				if(pos == -1)
 				{
 					LimparMsg();
-					gotoxy(15,23);
+					gotoxy(15,26);
 					printf("Cliente nao cadastrado!");
 					Sleep(1000);
 					LimparMsg();
@@ -315,7 +333,7 @@ void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
 					printf("Nome: %s", Cliente[pos].NomeCli);
 					
 					LimparMsg();
-					gotoxy(15,23);
+					gotoxy(15,26);
 					printf("Confirma a exclusao (S/N)?");
 	
 					gotoxy(42,23);
@@ -326,7 +344,7 @@ void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
 						TLC--;
 						
 						LimparMsg();
-						gotoxy(15,23);
+						gotoxy(15,26);
 						printf("Exclusao concluida!");
 						Sleep(1000);
 						LimparMsg();
@@ -334,14 +352,14 @@ void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
 				}
 			}else{
 				LimparMsg();
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("CPF invalido!");
 				Sleep(1000);
 				LimparMsg();
 			}
 		}else{
 			LimparMsg();
-			gotoxy(15,23);
+			gotoxy(15,26);
 			printf("Nao ha clientes cadastrados!");
 			Sleep(1000);
 			LimparMsg();
@@ -350,7 +368,7 @@ void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
 		
 		
 		LimparSaida();
-		gotoxy(15,23);
+		gotoxy(15,26);
 		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 		Sleep(1000);
 		op = toupper(getch());	
@@ -379,7 +397,7 @@ void ConsultaClientes(TpClientes Cliente[TF], int TL)
 			if(pos == -1)
 			{
 				LimparMsg();
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Cliente nao cadastrado!");
 				Sleep(1000);
 				LimparMsg();
@@ -396,7 +414,7 @@ void ConsultaClientes(TpClientes Cliente[TF], int TL)
 			}
 		}
 		
-		gotoxy(15,23);
+		gotoxy(15,26);
 		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 		Sleep(1000);
 		op = toupper(getch());
@@ -425,7 +443,7 @@ void ConsultaFornecedores(TpFornecedores Fornecedor[TF], int TLF)
 			if(pos == -1)
 			{
 				LimparMsg();
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Fornecedor nao cadastrado!");
 				Sleep(1000);
 				LimparMsg();
@@ -443,7 +461,7 @@ void ConsultaFornecedores(TpFornecedores Fornecedor[TF], int TLF)
 			}
 		}
 		
-		gotoxy(15,23);
+		gotoxy(15,26);
 		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 		Sleep(1000);
 		
@@ -475,7 +493,7 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF)
 				if(pos == -1)
 				{
 					LimparMsg();
-					gotoxy(15,23);
+					gotoxy(15,26);
 					printf("Fornecedor nao cadastrado!");
 					Sleep(1000);
 					LimparMsg();
@@ -493,7 +511,7 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF)
 					gotoxy(40,10);
 					printf("Cidade: %s", Fornecedor[pos].CidadeForn);
 					
-					gotoxy(15,23);
+					gotoxy(15,26);
 					printf("Confirma a exclusao (S/N)?");
 	
 					gotoxy(42,23);
@@ -504,7 +522,7 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF)
 						TLF--;
 						
 						LimparMsg();
-						gotoxy(15,23);
+						gotoxy(15,26);
 						printf("Exclusao concluida!");
 						Sleep(1000);
 						LimparMsg();
@@ -512,14 +530,14 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF)
 				}
 			}else{
 				LimparMsg();
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Codigo invalido!");
 				Sleep(1000);
 				LimparMsg();
 			}
 		}else{
 			LimparMsg();
-			gotoxy(15,23);
+			gotoxy(15,26);
 			printf("Nao ha fornecedores cadastrados!");
 			Sleep(1000);
 			LimparMsg();
@@ -528,7 +546,7 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF)
 		
 		
 		LimparSaida();
-		gotoxy(15,23);
+		gotoxy(15,26);
 		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 		Sleep(1000);
 		op = toupper(getch());	
@@ -555,7 +573,7 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 			if(pos == -1)
 			{
 				LimparMsg();
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Fornecedor nao cadastrado!");
 				Sleep(1000);
 				LimparMsg();
@@ -593,14 +611,14 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 						{
 							if(BuscaCod(Fornecedor[pos].CodForn,Fornecedor, TLF) == -1) 
 							{
-								gotoxy(15,23);
+								gotoxy(15,26);
 								printf("Codigo editado!");
 								Sleep(1500);
 								LimparMsg();
 							}
 							else
 							{
-								gotoxy(15,23);
+								gotoxy(15,26);
 								printf("Codigo ja esta em uso!");
 								Sleep(1500);
 								LimparMsg();
@@ -608,7 +626,7 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 						}
 						else
 						{
-							gotoxy(15,23);
+							gotoxy(15,26);
 							printf("Codigo Invalido!");
 							Sleep(1500);
 							LimparMsg();
@@ -623,7 +641,7 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 						fflush(stdin);
 						gets(Fornecedor[pos].NomeForn);
 						
-						gotoxy(15,23);
+						gotoxy(15,26);
 						printf("NOME EDITADO!");
 						Sleep(1500);
 						LimparMsg();
@@ -636,7 +654,7 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 						fflush(stdin);
 						gets(Fornecedor[pos].CidadeForn);
 						
-						gotoxy(15,23);
+						gotoxy(15,26);
 						printf("CIDADE EDITADA!");
 						Sleep(1500);
 						LimparMsg();
@@ -647,12 +665,117 @@ void AlteraFornecedores(TpFornecedores Fornecedor[TF], int TLF){
 		}
 		else
 		{
-			gotoxy(15,23);
+			gotoxy(15,26);
 			printf("Codigo Invalido!");
 			Sleep(1500);
 			LimparMsg();
 		}
 	}while(op!=27);
+}
+
+void CadastroProdutos(TpProdutos Produto[], int &TLP) {
+    char op;
+    int codAux, pos;
+
+    LimparSaida();
+
+    do {
+        gotoxy(43, 7);
+        printf("### CADASTRO DE PRODUTOS ###\n");
+        gotoxy(40, 9);
+        printf("Codigo do produto:");
+        scanf("%d", &codAux);
+        
+        if(codAux > 0)
+		{
+	        pos = BuscaCodProd(codAux, Produto, TLP);
+	        if (pos != -1) {
+	        	LimparMsg();
+	            gotoxy(15, 23);
+	            printf("Esse produto ja foi cadastrado, deseja adicionar no estoque? (S/N): "); // tratar
+	            Sleep(1500);
+	            LimparMsg();
+	        } else {
+	            // Incrementar TLF antes de acessar o novo índice
+	            Produto[TLP].CodProd = codAux;
+	            gotoxy(40, 10);
+	            printf("Descricao: ");
+	            fflush(stdin);
+	            gets(Produto[TLP].Descr);
+				
+				// data vazando a borda de saida
+				do
+				{
+				    gotoxy(40, 11);
+				    printf("Data de Validade(dd mm aaaa): ");
+				    scanf("%d%d%d", &Produto[TLP].DtValidade.Dia, &Produto[TLP].DtValidade.Mes, &Produto[TLP].DtValidade.Ano);
+				
+				    if (validarData(Produto[TLP].DtValidade) != 1) {
+				        // Exibe uma mensagem de erro e apaga a saída
+				        gotoxy(15, 23);
+				        printf("Data invalida. Digite novamente.");
+				        Sleep(1500);
+				        LimparMsg();
+				        LimparSaida(); // Limpa a saída
+				    }
+				} while (validarData(Produto[TLP].DtValidade) != 1);
+
+	            do
+	            {
+	            	gotoxy(40, 12);
+	            	printf("Estoque: ");
+	            	scanf("%d", &Produto[TLP].Estoque);
+	            	if(Produto[TLP].Estoque < 0)
+	            	{
+	            			LimparMsg();
+	            			gotoxy(15,26);
+							printf("Estoque invalido");
+							Sleep(1000);
+							LimparMsg();
+	            	}
+	            }while(Produto[TLP].Estoque < 0);
+	            
+	            do
+	            {
+	            	gotoxy(40, 13);
+	            	printf("Preco: ");
+	            	scanf("%f", &
+					Produto[TLP].Preco);
+	            	if(Produto[TLP].Preco < 0)
+	            	{
+	            			LimparMsg();
+	            			gotoxy(15,26);
+							printf("Preco invalido");
+							Sleep(1000);
+							LimparMsg();
+	            	}
+	            }while(Produto[TLP].Preco < 0);
+	            
+	            // Incrementar TLF somente após o cadastro bem-sucedido
+	            TLP++;
+		
+	            gotoxy(15, 23);
+	            printf("Produto cadastrado.");
+	            Sleep(1500);
+	            LimparMsg();
+	        }
+        }else
+        {
+        	LimparMsg();
+			gotoxy(15,26);
+			printf("Codigo invalido");
+			Sleep(1000);
+			LimparMsg();
+        }
+
+        
+
+        LimparSaida();
+        gotoxy(15, 23);
+        printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
+        Sleep(1000);
+        op = toupper(getch());
+    } while (op != 27);
 }
 
 void InserirDados(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos Produto[], int &TLC, int &TLF, int &TLP)
@@ -680,7 +803,7 @@ void InserirDados(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	TLF++;
 	
 	
-	gotoxy(15,23);
+	gotoxy(15,26);
 	printf("Dados inseridos");
 	Sleep(1000);
 	LimparMsg();
@@ -706,7 +829,7 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 			pos = BuscaCPF(auxCPF, Cliente, TL);
 			if(pos == -1)
 			{
-				gotoxy(15,23);
+				gotoxy(15,26);
 				printf("Cliente nao cadastrado!");
 				Sleep(1000);
 				LimparMsg();
@@ -747,14 +870,14 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 							{
 								if(BuscaCPF(Cliente[pos].CPF,Cliente, TL) == -1) 
 								{
-									gotoxy(15,23);
+									gotoxy(15,26);
 									printf("CPF EDITADO!");
 									Sleep(1500);
 									LimparMsg();
 								}
 								else
 								{
-									gotoxy(15,23);
+									gotoxy(15,26);
 									printf("CPF JA ESTA EM USO !");
 									Sleep(1500);
 									LimparMsg();
@@ -762,7 +885,7 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 							}
 							else
 							{
-								gotoxy(15,23);
+								gotoxy(15,26);
 								printf("CPF INVALIDO!");
 								Sleep(1500);
 								LimparMsg();
@@ -777,7 +900,7 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 						fflush(stdin);
 						gets(Cliente[pos].NomeCli);
 						
-						gotoxy(15,23);
+						gotoxy(15,26);
 						printf("NOME EDITADO!");
 						Sleep(1500);
 						LimparMsg();
@@ -858,7 +981,7 @@ void CadastroFornecedores(TpFornecedores Fornecedores[], int &TLF) {
 //			pos = BuscaCPF(auxCPF, Cliente, TL);
 //			if(pos == -1)
 //			{
-//				gotoxy(15,23);
+//				gotoxy(15,26);
 //				printf("Cliente nao cadastrado!");
 //				Sleep(1000);
 //				LimparMsg();
@@ -875,7 +998,7 @@ void CadastroFornecedores(TpFornecedores Fornecedores[], int &TLF) {
 //			}
 //		}
 //		
-//		gotoxy(15,23);
+//		gotoxy(15,26);
 //		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
 //		Sleep(1000);
 //		op = toupper(getch());
@@ -891,23 +1014,23 @@ char Menu(void)
 {
 	char op;
 	LimparMsg();
-	gotoxy(8,7);
+	gotoxy(8,8);
 	printf("###  M E N U  ###");
-	gotoxy(8,9);
-	printf("[A] Fazer cadastro");
 	gotoxy(8,10);
+	printf("[A] Fazer cadastro");
+	gotoxy(8,11);
 	printf("[B] Fazer consulta");
-    gotoxy(8,11);
+    gotoxy(8,12);
 	printf("[C] Fazer alteracao");
-	gotoxy(8,12);
-	printf("[D] Fazer exclusao");
 	gotoxy(8,13);
-	printf("[E] Fazer venda");
+	printf("[D] Fazer exclusao");
 	gotoxy(8,14);
-	printf("[F] Relatorios");
+	printf("[E] Fazer venda");
 	gotoxy(8,15);
+	printf("[F] Relatorios");
+	gotoxy(8,16);
 	printf("[ESC] Sair");
-	gotoxy(8,17);
+	gotoxy(8,18);
 	printf("Opcao desejada: ");
 	fflush(stdin);
 	op = toupper(getch());
@@ -942,8 +1065,8 @@ char MenuCadastro(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 						  break;
 				case 'B': CadastroFornecedores(Fornecedor, TLF);
 					  break;
-//				case 'C': CadastroProdutos();
-//						  break;	
+				case 'C': CadastroProdutos(Produto, TLP);
+						  break;	
 			}
 	}while(opCadastro!=27);
 }
@@ -1118,16 +1241,17 @@ void Moldura(int CI, int LI, int CF, int LF, int cor)
 void MoldPrincipal(void)
 {
 	clrscr();
-	Moldura(1,1,80,26,6); // MOLDURA DE FORA
-    Moldura(3,2,77,4,1); // MOLDURA TÍTULO
+	Moldura(1,1,90,30,6); // MOLDURA DE FORA
+    Moldura(3,2,85,4,5); // MOLDURA TÍTULO
+    
 	
-	gotoxy(12,3);
+	gotoxy(19,3);
 	printf("###  S I S T E M A   D E   V E N D A S  ###");
-	Moldura(3,6,35,20,3); // MOLDURA MENU
-	Moldura(36,6,77,20,9); // MOLDURA SAÍDA
-	Moldura(3,22,77,25,10); // MOLDURA MENSAGEM
+	Moldura(3,6,35,22,5); // MOLDURA MENU
+	Moldura(36,6,88,22,5); // MOLDURA SAÍDA
+	Moldura(3,24,88,28,5); // MOLDURA MENSAGEM
 	
-	gotoxy(5,23);
+	gotoxy(5,26);
 	printf("Mensagem: ");
 };
 
@@ -1166,7 +1290,9 @@ int main(void)
 	int TLP = 0, TLC = 0, TLF = 0; // tamanhos lógicos
 	char cpfaux[11];
 
+
 	LimparSaida();
+
 		
 	textbackground(0); // (preto) 0..7 (cinza)
 	
@@ -1193,6 +1319,6 @@ int main(void)
 		}
 	}while(opcao!=27);
 	
-	gotoxy(15,25);
+	gotoxy(15,30);
 	return 0;
 }

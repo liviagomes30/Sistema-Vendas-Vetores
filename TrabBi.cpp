@@ -41,15 +41,16 @@ struct TpProdutos
 struct TpVendas
 {
 	int CodVenda;
-	TpClientes CPF;
+	TpClientes Cliente;
 	TpData DataVenda;
 	float TotVenda;
 };
 
 struct TpVendasProd
 {
-	TpProdutos CodProd;
-	int CodVenda, Qtde;
+	TpVendas Venda;
+	TpProdutos Produto;
+	int Qtde;
 	float ValorUnitario;
 };
 
@@ -316,7 +317,8 @@ void RelatorioFornecedores(TpFornecedores Fornecedor[TF], int TLF) {
     }
 }
 
-void RelatorioProdutos(TpProdutos Produto[TF], int TLP) {
+void RelatorioProdutos(TpProdutos Produto[TF], int TLP) 
+{
     int linha = 7;
     int linhaMaxima = 21; // Limite superior da área de saída
     int coluna = 40;
@@ -350,6 +352,85 @@ void RelatorioProdutos(TpProdutos Produto[TF], int TLP) {
         }
     }
 }
+
+void RelatorioVendas(TpVendas Venda[], int TLV, TpVendasProd VendaProduto[], int TLVP, TpProdutos Produto[], int TLP)
+{
+    int linha = 7;
+    int linhaMaxima = 21; // Limite superior da área de saída
+    int coluna = 40;
+    float totalItem,pos;
+
+    if (TLV <= 0)
+    {
+        LimparSaida();
+        gotoxy(15, 26);
+        printf("Nao ha vendas cadastradas!");
+        Sleep(1000);
+        LimparMsg();
+    }
+    else
+    {
+        for (int i = 0; i < TLV; i++)
+        {
+            if (linha >= linhaMaxima)
+            {
+                // Se ultrapassar a borda da área de saída, aguarde uma ação do usuário para continuar.
+                LimparMsg();
+                gotoxy(15, 26);
+                printf("Pressione qualquer tecla para continuar...");
+                Sleep(1000);
+                getch();
+                LimparSaida();
+                LimparMsg();
+                linha = 7;
+            }
+
+            gotoxy(coluna, linha);
+            printf("Codigo da venda: %d", Venda[i].CodVenda);
+            linha += 2;
+            printf("Produtos:");
+
+            double totalVenda = 0.0; // Inicializa o total da venda para esta venda específica.
+
+            // Encontrar e exibir os produtos vendidos nessa venda.
+            for (int j = 0; j < TLVP; j++)
+            {
+                if (VendaProduto[j].Venda.CodVenda == Venda[i].CodVenda)
+                {
+                	linha++;
+                	gotoxy(coluna, linha);
+                	printf("%d", VendaProduto[TLVP].Produto.CodProd);
+                	coluna = coluna + 3;
+                	
+                	gotoxy(coluna, linha);
+                	pos = BuscaCodProd(VendaProduto[TLVP].Produto.CodProd, Produto, TLP);
+                	printf("%s", Produto[pos].Descr);
+                	coluna = coluna + 3;
+                	
+                	gotoxy(coluna, linha);
+                	printf("%d", VendaProduto[j].Qtde);
+                	coluna = coluna + 3;
+                	
+                	gotoxy(coluna, linha);
+                	printf("R$ %.2f", VendaProduto[j].Qtde*Produto[pos].Preco);
+                	
+                	gotoxy(coluna, linha);
+                	printf("Fornecedor");
+                	
+                	
+  
+                }
+            }
+
+            // Exiba o total da venda para esta venda específica.
+            linha++;
+            gotoxy(coluna, linha);
+            printf("Total");
+            linha += 4; // Ajuste o espaço entre cada venda.
+        }
+    }
+}
+
 
 
 void ExcluiClientes(TpClientes Cliente[TF], int &TLC)
@@ -1019,7 +1100,7 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 
 void CadastroFornecedores(TpFornecedores Fornecedores[], int &TLF) {
     char op;
-    int codAux, pos;
+    int codAux, pos,cont=0;
 
     LimparSaida();
 
@@ -1066,53 +1147,156 @@ void CadastroFornecedores(TpFornecedores Fornecedores[], int &TLF) {
     } while (op != 27);
 }
 
-//void ConsultaFornecedores(TpClientes Cliente[TF], int TL)
-//{
-//	int pos = 0;
-//	char auxCPF[11], op;
-//	
-//	do
-//	{
-//		LimparSaida();
-//		gotoxy(43,7);
-//		printf("### CONSULTA DE CLIENTES ###\n");
-//		gotoxy(40,9);
-//		printf("CPF (APENAS NUMEROS):"); 
-//		fflush(stdin);
-//		gets(auxCPF);
-//		
-//		if (TL > 0 && strlen(auxCPF) > 0)
-//		{
-//			pos = BuscaCPF(auxCPF, Cliente, TL);
-//			if(pos == -1)
-//			{
-//				gotoxy(15,26);
-//				printf("Cliente nao cadastrado!");
-//				Sleep(1000);
-//				LimparMsg();
-//			}else{
-//				LimparSaida();
-//				gotoxy(43,7);
-//				printf("Detalhes do cliente:");
-//				gotoxy(40,8);
-//				printf("CPF: %s", Cliente[pos].CPF);
-//				gotoxy(40,9);
-//				printf("Nome: %s", Cliente[pos].NomeCli);
-//				getch();
-//				// colocar o restante dos dados (qtade de compras...)
-//			}
-//		}
-//		
-//		gotoxy(15,26);
-//		printf("[ENTER] - CONTINUAR & [ESQ] - SAIR");
-//		Sleep(1000);
-//		op = toupper(getch());
-//			
-//	}while(op != 27);
-//	
-//}
+void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVendasProd VendaProduto[], int &TLVP, TpProdutos Produto[], int TLP)
+{
+    char auxCPF[11], op;
+    int pos, aux, cont = 0;
+
+    do
+    {
+    	TLV++; // Incrementa o contador de vendas
+    	Venda[TLV].CodVenda = TLV;
+        LimparSaida();
+        gotoxy(43, 7);
+        printf("### VENDA ###\n");
+        gotoxy(40, 9);
+        printf("CPF do cliente (APENAS NUMEROS): ");
+        fflush(stdin);
+        gets(auxCPF);
+
+        if (validarCPF(auxCPF) == 0)
+        {
+            LimparMsg();
+            gotoxy(15, 26);
+            printf("CPF invalido");
+            Sleep(1000);
+            LimparMsg();
+        }
+        else
+        {
+            pos = BuscaCPF(auxCPF, Cliente, TLC);
+            if (pos == -1)
+            {
+                LimparMsg();
+                gotoxy(15, 26);
+                printf("Cliente nao cadastrado");
+                Sleep(1000);
+                LimparMsg();
+            }
+            else
+            {
+
+                // Copia o CPF do cliente para a estrutura de venda
+                strcpy(Venda[TLV].Cliente.CPF, Cliente[pos].CPF);
+                
+                do
+				{
+					gotoxy(70, 10);
+					printf("                 ");
+				    gotoxy(40, 10);
+				    printf("Data(dd mm aaaa): ");
+				    scanf("%d%d%d", &Venda[TLV].DataVenda.Dia, &Venda[TLV].DataVenda.Mes, &Venda[TLV].DataVenda.Ano);
+				
+				    if (validarData(Venda[TLV].DataVenda) != 1) {
+				        // Exibe uma mensagem de erro e apaga a saída
+				        gotoxy(15,26);
+				        printf("Data invalida. Digite novamente.");
+				        Sleep(1500);
+				        LimparMsg();
+				    }
+				} while (validarData(Venda[TLV].DataVenda) != 1);
 
 
+                do
+				{
+				    gotoxy(59, 12);
+				    printf("                    ");
+				    gotoxy(40, 12);
+				    printf("Codigo do produto: ");
+				    scanf("%d", &aux);
+				
+				    pos = BuscaCodProd(aux, Produto, TLP);
+				
+				    if (pos == -1)
+				    {
+				        LimparMsg();
+				        gotoxy(15, 26);
+				        printf("Produto nao cadastrado");
+				        Sleep(1000);
+				        LimparMsg();
+				    }
+				    else
+				    {
+				        // Copia o código do produto para a estrutura de venda do produto
+				        VendaProduto[TLVP].Produto.CodProd = Produto[pos].CodProd;
+				
+				        do
+				        {
+				        	LimparMsg();
+				            gotoxy(50, 13);
+				            printf("              ");
+				            gotoxy(40, 13);
+				            printf("Quantidade: ");
+				            scanf("%d", &VendaProduto[TLVP].Qtde);
+				
+				            if (VendaProduto[TLVP].Qtde < 0)
+				            {
+				                // Exibe uma mensagem de erro e apaga a saída
+				                LimparMsg();
+				                gotoxy(15, 26);
+				                printf("Quantidade invalida. Digite novamente.");
+				                Sleep(1000);
+				            }
+				
+				            if (VendaProduto[TLVP].Qtde > Produto[pos].Estoque)
+				            {
+				                LimparMsg();
+				                gotoxy(15, 26);
+				                printf("Nao ha estoque suficiente. Estoque total: %d", Produto[pos].Estoque);
+				                gotoxy(15, 27);
+				                printf("Digite novamente a quantidade desejada. ");
+				            }
+				        } while (VendaProduto[TLVP].Qtde > Produto[pos].Estoque);
+						
+						VendaProduto[TLVP].ValorUnitario = Produto[pos].Preco;
+						gotoxy(40, 14);
+						printf("Preco Unitario: %.2f", VendaProduto[TLVP].ValorUnitario);
+
+		                // Atualiza o estoque do produto
+		                Produto[pos].Estoque -= VendaProduto[TLVP].Qtde;
+		
+		                // Calcula o total da venda
+		                Venda[TLV].TotVenda += VendaProduto[TLVP].Qtde * VendaProduto[TLVP].ValorUnitario;
+		
+		                TLVP++; // Incrementa o contador de produtos vendidos
+		                cont++;
+		
+		                LimparMsg();
+		                gotoxy(15, 26);
+		                printf("Produto adicionado a venda com sucesso");
+		                Sleep(1000);
+				            
+				        
+				    }
+				
+				    LimparMsg();
+				    gotoxy(15, 26);
+				    printf("[ENTER] - Adicionar outro produto & [ESQ] - Concluir venda");
+				    op = toupper(getch());
+				} while (op != 27);
+
+			}
+		}
+		
+		if(cont > 0)
+			TLV++;
+			
+		LimparMsg();
+		gotoxy(15, 26);
+		printf("[ENTER] - Fazer outra venda & [ESQ] - Concluir venda");
+		op = toupper(getch());
+	}while(op != 27);
+}
 
 
 char Menu(void)
@@ -1269,6 +1453,8 @@ char MenuExclusao(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 				case 'B': ExcluiFornecedores(Fornecedor, TLF);
 						  break;
 //				case 'C': ExcluiProdutos();
+//						  break;
+//				case 'D': ExcluiVendas();
 //						  break;	
 			}
 	}while(opExclusao!=27);
@@ -1392,8 +1578,9 @@ int main(void)
 	TpClientes Clientes[TF];
 	TpFornecedores Fornecedores[TF];
 	TpProdutos Produtos[TF];
-	int TLP = 0, TLC = 0, TLF = 0; // tamanhos lógicos
-	char cpfaux[11];
+	TpVendas Venda[TF];
+	TpVendasProd VendaProd[TF];
+	int TLP = 0, TLC = 0, TLF = 0, TLV = 0, TLVP = 0; // tamanhos lógicos
 
 
 	LimparSaida();
@@ -1415,8 +1602,8 @@ int main(void)
 					  break;
 			case 'D': MenuExclusao(Clientes, Fornecedores, Produtos, TLC, TLF, TLP);
 					  break;
-//			case 'G': FazerVenda();
-//					  break;
+			case 'E': FazerVenda(Venda, TLV, Clientes, TLC, VendaProd, TLVP, Produtos, TLP);
+					  break;
 			case 'F': MenuRelatorios(Clientes, Fornecedores, Produtos, TLC, TLF, TLP);
 					  break;	
 			case 'I': InserirDados(Clientes, Fornecedores, Produtos, TLC, TLF, TLP);

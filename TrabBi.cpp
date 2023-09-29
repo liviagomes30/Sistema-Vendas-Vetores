@@ -314,7 +314,7 @@ void RelatorioFornecedores(TpFornecedores Fornecedor[TF], int TLF) {
     }
 }
 
-void RelatorioProdutos(TpProdutos Produto[TF], int TLP) 
+void RelatorioProdutos(TpProdutos Produto[TF], int TLP,TpFornecedores Fornecedor, int TLF) 
 {
     int linha = 7;
     int linhaMaxima = 20; // Limite superior da área de saída
@@ -346,6 +346,9 @@ void RelatorioProdutos(TpProdutos Produto[TF], int TLP)
             printf("Data de Validade: %d/%d/%d", Produto[i].DtValidade.Dia, Produto[i].DtValidade.Mes, Produto[i].DtValidade.Ano);
 			gotoxy(coluna, linha + 3);
 			printf("Codigo do fornecedor: %d", Produto[i].CodForn);
+			gotoxy(coluna, linha + 3);
+			pos = BuscaCod(Produto[i].CorForn, Fornecedor, TLF);
+			printf("Nome do fornecedor: %s", Fornecedor[pos].NomeForn);
 			
             linha += 4; 
         }
@@ -1175,11 +1178,10 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
     char auxCPF[11], op;
     int pos, aux, cont = 0;
 	
-	TLV++; // Incrementa o contador de vendas
+	TLV++;
     Venda[TLV].CodVenda = TLV;
     do
     {
-    	cont = 0;
     	VendaProduto[TLVP].CodVenda = Venda[TLV].CodVenda;
         LimparSaida();
         gotoxy(43, 7);
@@ -1222,7 +1224,7 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				    scanf("%d%d%d", &Venda[TLV].DataVenda.Dia, &Venda[TLV].DataVenda.Mes, &Venda[TLV].DataVenda.Ano);
 				
 				    if (validarData(Venda[TLV].DataVenda) != 1) {
-				        // Exibe uma mensagem de erro e apaga a saída
+				        // Exibe uma mensagem de erro
 				        gotoxy(15,26);
 				        printf("Data invalida. Digite novamente.");
 				        Sleep(1500);
@@ -1230,7 +1232,7 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				    }
 				} while (validarData(Venda[TLV].DataVenda) != 1);
 
-
+				VendaProduto[TLVP].CodVenda = Venda[TLV].CodVenda;
                 do
 				{
 				    gotoxy(59, 12);
@@ -1252,8 +1254,8 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				    else
 				    {
 				        // Copia o código do produto para a estrutura de venda do produto
-//				        VendaProduto[TLVP].Produto.CodProd = Produto[pos].CodProd;
 						VendaProduto[TLVP].CodProd = Produto[pos].CodProd;
+						VendaProduto[TLVP].ValorUnitario = Produto[pos].Preco;
 				
 				        do
 				        {
@@ -1285,7 +1287,7 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				            }
 				        } while (VendaProduto[TLVP].Qtde > Produto[pos].Estoque);
 						
-						VendaProduto[TLVP].ValorUnitario = Produto[pos].Preco;
+						
 						gotoxy(40, 14);
 						printf("Preco Unitario: %.2f", VendaProduto[TLVP].ValorUnitario);
 
@@ -1295,14 +1297,12 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 		                // Calcula o total da venda
 		                Venda[TLV].TotVenda += VendaProduto[TLVP].Qtde * VendaProduto[TLVP].ValorUnitario;
 		
-		                 // Incrementa o contador de produtos vendidos
-		                cont++;
-		
 		                LimparMsg();
 		                gotoxy(15, 26);
 		                printf("Produto adicionado a venda com sucesso");
-		                TLVP++;
-		                Sleep(1500); 
+		                Sleep(1500);
+						
+						TLVP++; 
 				    }
 				
 				    LimparMsg();
@@ -1314,15 +1314,55 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 
 			}
 		}
-		
-		if(cont > 0)
-			TLV++;
-			
+
 		LimparMsg();
 		gotoxy(15, 26);
 		printf("[ENTER] - Fazer outra venda & [ESQ] - Concluir venda");
 		op = toupper(getch());
 	}while(op != 27);
+}
+
+void AumentarPreco(TpProdutos Produto[], int TLP, TpFornecedores Fornecedor[], int TLF)
+{
+	int CodFornecedor;
+	float percentualAumento, aumento;
+	
+	LimparSaida();
+    gotoxy(43, 7);
+    printf("### AUMENTO DE PRECO ###\n");
+    gotoxy(40, 9);
+    printf("Percentual de aumento (inteiro): ");
+    scanf("%d", &percentualAumento);
+    
+    do
+    {
+    	gotoxy(40, 10);
+    	printf("Codigo do Fornecedor: ");
+    	scanf("%d", &CodFornecedor);
+    	pos=BuscaCod(CodFornecedor, Fornecedor, TLF);
+    	if(pos == -1)
+    	{
+    			LimparMsg();
+    			gotoxy(15,26);
+				printf("Fornecedor nao cadastrado.");
+				//talvez um "deseja cadastrar um novo?"
+				Sleep(1000);
+				LimparMsg();
+    	}
+    	else
+    	{
+    		 for (int i = 0; i < TLP; i++)
+		    {
+		        if (Produto[i].CodForn == CodFornecedor)
+		        {
+		            // Calcula o novo preço com base no percentual de aumento
+		            aumento = Produto[i].Preco * (percentualAumento / 100.0);
+		            Produto[i].Preco += aumento;
+		        }
+		    }
+		}
+    }while(pos == -1);
+   
 }
 
 
@@ -1345,8 +1385,12 @@ char Menu(void)
 	gotoxy(8,15);
 	printf("[F] Relatorios");
 	gotoxy(8,16);
-	printf("[ESC] Sair");
+	printf("[G] Aumento de precos");
+	gotoxy(8,17);
+	printf("[I] Inserir Dados");
 	gotoxy(8,18);
+	printf("[ESC] Sair");
+	gotoxy(8,20);
 	printf("Opcao desejada: ");
 	fflush(stdin);
 	op = toupper(getch());
@@ -1503,7 +1547,7 @@ char MenuRelatorios(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProduto
 	    gotoxy(8,11);
 		printf("[C] Relatorio produtos"); 
 		gotoxy(8,12);
-		printf("[C] Relatorio de vendas"); 
+		printf("[E] Relatorio de vendas"); 
 		gotoxy(8,13);
 		printf("[ESC] VOLTAR"); 
 		gotoxy(8,14);
@@ -1632,6 +1676,8 @@ int main(void)
 			case 'E': FazerVenda(Venda, TLV, Clientes, TLC, VendaProd, TLVP, Produtos, TLP);
 					  break;
 			case 'F': MenuRelatorios(Clientes, Fornecedores, Produtos,Venda,VendaProd, TLC, TLF, TLP, TLV, TLVP);
+					  break;
+			case 'G': AumentarPreco(Produtos, TLP, Fornecedores,TLF);
 					  break;	
 			case 'I': InserirDados(Clientes, Fornecedores, Produtos, TLC, TLF, TLP);
 					  break;		

@@ -1,3 +1,6 @@
+// Lívia Gomes de Souza
+// Mary Adryany Duarte Gonçalves da Silva
+
 #include <conio2.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -265,62 +268,144 @@ void CadastroClientes(TpClientes Cliente[], int &TLC)
 	
 }
 
-void exibirProdutos(int codVenda, TpVendasProd VendaProd[], TpFornecedores Fornecedor[], TpProdutos Produto[], int TLVP, int TLF, int TLP, int &linha, int &coluna)
+void CupomFiscal(int codVenda, TpClientes Cliente[], TpVendas Venda[], TpVendasProd VendaProd[], TpProdutos Produto[], int TLC, int TLV, int TLVP, int TLP)
 {
-    int pos, posForn, linhaMaxima = 19;
-    double totalItem=0;
-    for (int j = 0; j < TLVP; j++)
-    {
-        if (codVenda == VendaProd[j].CodVenda)
-        {
-            linha += 1; // Incrementa linha duas vezes
-            gotoxy(coluna, linha);
-            printf("%d", VendaProd[j].CodProd);
-            if (linha >= linhaMaxima) {
-                // Se ultrapassar a borda da área de saída, aguarde uma ação do usuário para continuar.
-                gotoxy(15,26);
-				printf("Pressione qualquer tecla para continuar...");
-				Sleep(1500);
-                getch();
-                LimparSaida();
-                LimparMsg();
-                linha = 7;
-            }
-
-            pos = BuscaCodProd(VendaProd[j].CodProd, Produto, TLP);
-
-            coluna += 10;
-            gotoxy(coluna, linha);
-            printf("%s", Produto[pos].Descr);
-
-            coluna += 9;
-            gotoxy(coluna, linha);
-            printf("%d", VendaProd[j].Qtde);
-
-            totalItem = VendaProd[j].Qtde*Produto[pos].Preco;
-            coluna += 6;
-            gotoxy(coluna, linha);
-            printf("R$%.2f", totalItem);
-
-            coluna += 10;
-            gotoxy(coluna, linha);
-            posForn = BuscaCod(Produto[pos].CodForn, Fornecedor, TLF);
-            if (posForn != -1) {
-                printf("%s", Fornecedor[posForn].NomeForn);
-            } else {
-                printf("Fornecedor nao encontrado");
-            }
-            
-            linha += 1;
-            coluna = 40;
-        }
-    }
+	int linha = 7, linhaMaxima = 19, coluna = 40, posVenda, posProd, posForn, k=1, posCli;
+	double totalItem=0;
+	LimparSaida();
+	posVenda = BuscaCodVenda(codVenda, Venda, TLV);
+	gotoxy(55, linha);
+	printf("SUPERMERCADO LIMA");
+	linha+=2;
+	gotoxy(coluna,linha);
+	printf("Rua Sao Francisco de Assis, 123. Centro.");
+	linha++;
+	gotoxy(coluna,linha);
+	printf("Sao Paulo - SP.");
+	linha++;
+	gotoxy(coluna,linha);
+	printf("CNPJ: 12.641.071/0001-98");
+	gotoxy(coluna+30,linha);
+	printf("%d/%d/%d",Venda[posVenda].DataVenda.Dia,Venda[posVenda].DataVenda.Mes, Venda[posVenda].DataVenda.Ano);
+	linha++;
+	gotoxy(coluna,linha);
+	posCli = BuscaCPF(Venda[posVenda].ClienteCPF, Cliente, TLC);
+	printf("Cliente: %s",Cliente[posCli].NomeCli); 
+	linha++;
+	gotoxy(coluna,linha);
+	printf("------------------------------------------"); 
+	linha++;
+	gotoxy(coluna,linha);
+	printf("PRODUTOS: ");
+	linha+=2;
+	gotoxy(coluna,linha);
+	printf("COD");
+	gotoxy(coluna+5,linha);
+	printf("ITEM");
+	gotoxy(coluna+11,linha);
+	printf("DESCRICAO");
+	gotoxy(coluna+36,linha);
+	printf("VALOR");
+	//imprimir produtos e formatar
+	for (int j = 0; j < TLVP; j++)
+	            {
+	            	if (linha >= linhaMaxima)
+		            {
+		                // Se ultrapassar a borda da área de saída, aguarde uma ação do usuário para continuar.
+		                LimparMsg();
+		                gotoxy(15, 26);
+		                printf("Pressione qualquer tecla para continuar...");
+		                Sleep(1500);
+		                getch();
+		                LimparSaida();
+		                LimparMsg();
+		                linha = 7;
+		            }
+	                if (VendaProd[j].CodVenda == codVenda)
+	                {
+	                    linha++;
+	                    gotoxy(coluna, linha);
+	                    printf("%d", k);
+	                    k++;
+	                    
+	                    posProd = BuscaCodProd(VendaProd[j].CodProd, Produto, TLP);
+						gotoxy(coluna+5,linha);
+						printf("%d",VendaProd[j].CodProd);
+						
+	                    gotoxy(coluna+11, linha);
+	                    printf("%s", Produto[posProd].Descr);
+	
+	                    gotoxy(coluna+22, linha);
+	                    printf("%.2f",Produto[posProd].Preco);
+	                    
+	                    gotoxy(coluna+28, linha);
+	                    printf("X");
+	                    
+	                    gotoxy(coluna+30, linha);
+	                    printf("%d",VendaProd[j].Qtde);
+	                    
+	    
+	
+	                    totalItem = VendaProd[j].Qtde * Produto[posProd].Preco;
+	                    gotoxy(coluna+36, linha);
+	                    printf("R$%.2f", totalItem);
+	
+	                    coluna = 40; // Reinicializa coluna para o próximo produto
+	                    
+	                }
+	            }
+	linha++;
+	if (linha >= linhaMaxima)
+	{
+		LimparMsg();
+		gotoxy(15, 26);
+		printf("Pressione qualquer tecla para continuar...");
+		Sleep(1500);
+		getch();
+		LimparSaida();
+		LimparMsg();
+		linha = 7;
+	}
+	gotoxy(coluna, linha);
+	printf("------------------------------------------"); 
+	linha++;
+	if (linha >= linhaMaxima)
+	{
+		LimparMsg();
+		gotoxy(15, 26);
+		printf("Pressione qualquer tecla para continuar...");
+		Sleep(1500);
+		getch();
+		LimparSaida();
+		LimparMsg();
+		linha = 7;
+	}
+	gotoxy(coluna, linha);
+	printf("TOTAL: R$%.2f",Venda[posVenda].TotVenda);
+	linha++;
+	if (linha >= linhaMaxima)
+	{
+		LimparMsg();
+		gotoxy(15, 26);
+		printf("Pressione qualquer tecla para continuar...");
+		Sleep(1500);
+		getch();
+		LimparSaida();
+		LimparMsg();
+		linha = 7;
+	}
+	gotoxy(coluna, linha);
+	printf("Agradecemos a preferencia ;)");
+	Sleep(3000);
 }
+
 
 void RelatorioClientes(TpClientes Cliente[TF], int TLC) {
     int linha = 7;
     int linhaMaxima = 19; // Limite superior da área de saída
     int coluna = 40;
+    
+    LimparSaida();
 
     if (TLC <= 0) {
         gotoxy(15, 26);
@@ -344,8 +429,12 @@ void RelatorioClientes(TpClientes Cliente[TF], int TLC) {
             printf("CPF: %s", Cliente[i].CPF);
             gotoxy(coluna, linha + 1);
             printf("Nome: %s", Cliente[i].NomeCli);
+            gotoxy(coluna, linha + 2);
+			printf("Qtde de compras: %d", Cliente[i].QtdeCompras);
+			gotoxy(coluna, linha + 3);
+			printf("Valor total comprado: %.2f", Cliente[i].ValorTotComprado);
 
-            linha += 3; 
+            linha += 5; 
         }
     }
 }
@@ -355,6 +444,7 @@ void RelatorioFornecedores(TpFornecedores Fornecedor[TF], int TLF) {
     int linha = 7;
     int linhaMaxima = 19; // Limite superior da área de saída
     int coluna = 40;
+    LimparSaida();
 
     if (TLF <= 0) {
         gotoxy(15, 26);
@@ -383,7 +473,7 @@ void RelatorioFornecedores(TpFornecedores Fornecedor[TF], int TLF) {
             gotoxy(coluna, linha + 2);
             printf("Cidade: %s", Fornecedor[i].CidadeForn);
 
-            linha += 1; 
+            linha += 3; 
         }
     }
 }
@@ -394,7 +484,7 @@ void RelatorioProdutos(TpProdutos Produto[], int TLP,TpFornecedores Fornecedor[]
     int linhaMaxima = 19; // Limite superior da área de saída
     int coluna = 40;
     int pos;
-
+    LimparSaida();
     if (TLP < 0) {
         gotoxy(15,26);
 		printf("Nao ha produtos cadastrados!");
@@ -420,7 +510,7 @@ void RelatorioProdutos(TpProdutos Produto[], int TLP,TpFornecedores Fornecedor[]
             gotoxy(coluna, linha + 2);
             printf("Data de Validade: %d/%d/%d", Produto[i].DtValidade.Dia, Produto[i].DtValidade.Mes, Produto[i].DtValidade.Ano);
 			gotoxy(coluna, linha + 3);
-			printf("Preco: %d", Produto[i].Estoque);
+			printf("Estoque: %d", Produto[i].Estoque);
 			gotoxy(coluna, linha + 4);
 			printf("Preco: %.2f", Produto[i].Preco);
 			gotoxy(coluna, linha + 5);
@@ -429,7 +519,7 @@ void RelatorioProdutos(TpProdutos Produto[], int TLP,TpFornecedores Fornecedor[]
 			pos = BuscaCod(Produto[i].CodForn, Fornecedor, TLF);
 			printf("Nome do fornecedor: %s", Fornecedor[pos].NomeForn);
 			
-            linha += 7; 
+            linha += 8; 
         }
     }
 }
@@ -472,7 +562,7 @@ void RelatorioVendas(TpVendas Venda[], int TLV, TpVendasProd VendaProduto[], int
             }
 
             gotoxy(coluna, linha);
-            printf("Codigo da venda: %d", Venda[i].CodVenda);
+            printf("Codigo da venda: %d", Venda[i].CodVenda + 1);
             linha += 1; // Incrementa linha duas vezes
             gotoxy(coluna, linha);
             printf("Produtos:");
@@ -797,7 +887,8 @@ void ConsultaProdutos(TpProdutos Produto[], int TLP)
 
 void ExcluiVendas(TpVendas Venda[], TpVendasProd VendaProd[], TpFornecedores Fornecedor[], TpProdutos Produto[], int &TLV, int &TLVP,int TLF, int TLP)
 {
-	int codAux, pos, op, linha=7, coluna=40;
+	int codAux, posVenda, op, linha=7, coluna=40, linhaMaxima = 19, posForn, posProd;
+	double totalItem;
 	do
 	{
 		if(TLV > 0)
@@ -809,10 +900,10 @@ void ExcluiVendas(TpVendas Venda[], TpVendasProd VendaProd[], TpFornecedores For
 			printf("Codigo:"); 
 			scanf("%d", &codAux);
 		
-			if(codAux > 0)
+			if(codAux >= 0)
 			{
-				pos = BuscaCodVenda(codAux, Venda, TLV);
-				if(pos == -1)
+				posVenda = BuscaCodVenda(codAux, Venda, TLV);
+				if(posVenda == -1)
 				{
 					LimparMsg();
 					gotoxy(15,26);
@@ -825,38 +916,98 @@ void ExcluiVendas(TpVendas Venda[], TpVendasProd VendaProd[], TpFornecedores For
 				{
 					LimparSaida();
 					gotoxy(coluna,linha);
-					linha+=1;
+					linha+=2;
 					printf("Detalhes da Venda:");
 					gotoxy(coluna,linha);
+					printf("Codigo: %d", Venda[posVenda].CodVenda);
+					gotoxy(60,linha);
+					printf("CPF: %s",Venda[posVenda].ClienteCPF);
 					linha+=1;
-					printf("Codigo: %d", Venda[pos].CodVenda);
 					gotoxy(coluna,linha);
-					linha+=1;
-					printf("Nome: %d/%d/%d", Venda[pos].DataVenda.Dia, Venda[pos].DataVenda.Mes, Venda[pos].DataVenda.Ano);
+					linha+=2;
+					printf("Data: %d/%d/%d", Venda[posVenda].DataVenda.Dia, Venda[posVenda].DataVenda.Mes, Venda[posVenda].DataVenda.Ano);
 					gotoxy(coluna,linha);
-					linha+=1;
 					printf("Produtos:");
-					exibirProdutos(Venda[pos].CodVenda, VendaProd, Fornecedor, Produto, TLVP, TLP, TLF, linha, coluna);
+					for (int j = 0; j < TLVP; j++)
+	            {
+	            	if (linha >= linhaMaxima)
+		            {
+		                // Se ultrapassar a borda da área de saída, aguarde uma ação do usuário para continuar.
+		                LimparMsg();
+		                gotoxy(15, 26);
+		                printf("Pressione qualquer tecla para continuar...");
+		                Sleep(1500);
+		                getch();
+		                LimparSaida();
+		                LimparMsg();
+		                linha = 7;
+		            }
+	                if (VendaProd[j].CodVenda == codAux)
+	                {
+	                    linha += 1;
+	                    gotoxy(coluna, linha);
+	                    printf("%d", VendaProd[j].CodProd);
+	
+	                    posProd = BuscaCodProd(VendaProd[j].CodProd, Produto, TLP);
+	
+	                    coluna += 10;
+	                    gotoxy(coluna, linha);
+	                    printf("%s", Produto[posProd].Descr);
+	
+	                    coluna += 9;
+	                    gotoxy(coluna, linha);
+	                    printf("%d", VendaProd[j].Qtde);
+	
+	                    totalItem = VendaProd[j].Qtde * Produto[posProd].Preco;
+	                    coluna += 6;
+	                    gotoxy(coluna, linha);
+	                    printf("R$%.2f", totalItem);
+	
+	                    coluna += 10;
+	                    posForn = BuscaCod(Produto[posProd].CodForn, Fornecedor, TLF);
+	                    if (posForn != -1)
+	                    {
+	                        gotoxy(coluna, linha);
+	                        printf("%s", Fornecedor[posForn].NomeForn);
+	                    }
+	                    else
+	                    {
+	                        gotoxy(coluna, linha);
+	                        printf("Fornecedor nao encontrado");
+	                    }
+	
+	                    linha += 1; // Incrementa linha para o próximo produto
+	                    coluna = 40; // Reinicializa coluna para o próximo produto
+	                }
+	            }
+            
 					gotoxy(coluna,linha);
 					linha+=1;
-					printf("Cidade: %.2f", Venda[pos].TotVenda);
-					
-					gotoxy(42,26);
-					printf("Confirma a exclusao (S/N)?");
+					printf("Total: R$%.2f", Venda[posVenda].TotVenda);
+					linha+=1;
+					gotoxy(coluna,linha);
+					printf("Confirma a exclusao (S/N)? ");
 	
-					gotoxy(42,23);
 					if(toupper(getche()) == 'S'){
+						for(int i=0;i<TLVP;i++)
+						{
+							if(VendaProd[i].CodVenda ==  Venda[posVenda].CodVenda)
+							{
+								posProd=BuscaCodProd(VendaProd[i].CodProd, Produto, TLP);
+								Produto[posProd].Estoque += VendaProd[i].Qtde;
+							}
+						}
 						for(int i=0; i<TLVP;i++)
 						{
-							if(VendaProd[i].CodVenda ==  Venda[pos].CodVenda)
+							if(VendaProd[i].CodVenda ==  Venda[posVenda].CodVenda)
 							{
 								VendaProd[i] = VendaProd[i+1];
 								TLVP--;
 							}
 						}
 						
-						for( ; pos < TLV - 1; pos++)
-							Venda[pos] = Venda[pos + 1];
+						for( ; posVenda < TLV - 1; posVenda++)
+							Venda[posVenda] = Venda[posVenda + 1];
 						
 						
 						TLV--;
@@ -866,6 +1017,11 @@ void ExcluiVendas(TpVendas Venda[], TpVendasProd VendaProd[], TpFornecedores For
 						printf("Exclusao concluida!");
 						Sleep(1500);
 						LimparMsg();
+					}
+					else
+					{
+						linha=7;
+						coluna=40;
 					}
 				}
 			}else{
@@ -1397,7 +1553,7 @@ void AlteraProdutos(TpProdutos Produto[], int TLP, TpFornecedores Fornecedor[], 
 
 void CadastroProdutos(TpProdutos Produto[], int &TLP, TpFornecedores Fornecedor[], int &TLF) {
     char op,resp;
-    int codAux, pos, codForn;
+    int codAux, pos, codForn,qtde, pos2;
 
     LimparSaida();
 
@@ -1415,9 +1571,22 @@ void CadastroProdutos(TpProdutos Produto[], int &TLP, TpFornecedores Fornecedor[
 	        	LimparMsg();
 	            gotoxy(15,26);
 	            printf("Esse produto ja foi cadastrado, deseja adicionar no estoque? (S/N): "); 
-				// tratar
-	            Sleep(1500);
-	            LimparMsg();
+	            op = getch();
+				if(toupper(op) == 'S')
+				{
+					gotoxy(40, 9);
+					printf("Codigo do produto: %d", codAux);
+					gotoxy(40, 10);
+					printf("Digite a quantidade: ");
+					scanf("%d", &qtde);
+					pos2 = BuscaCodProd(codAux, Produto, TLP);
+					Produto[pos2].Estoque += qtde;
+					LimparMsg();
+					gotoxy(15,26);
+	            	printf("Produto adicionado ao estoque com sucesso!"); 
+	            	Sleep(1500);
+	            	LimparMsg();
+				}
 	        } else {
 	            // Incrementar TLF antes de acessar o novo índice
 	            Produto[TLP].CodProd = codAux;
@@ -1655,17 +1824,11 @@ void AlteraClientes(TpClientes Cliente[TF], int TL){
 					gotoxy(40,12);
 					printf("[B] - Nome: ");
 					printf("%s",Cliente[pos].NomeCli);
-					gotoxy(40, 13);
-					printf("[C] - Quantidade de compras: "); 
-					printf("%d", Cliente[pos].QtdeCompras);
 					gotoxy(40, 14);
-					printf("[D] - Valor Total Comprado: "); 
-					printf("%.2f", Cliente[pos].ValorTotComprado);
-					gotoxy(40, 15);
 					printf("[ENTER] - SALVAR");
-					gotoxy(43, 18);
+					gotoxy(40, 15);
 					printf("[ESQ] - VOLTAR");
-					gotoxy(43, 18);
+					gotoxy(40, 16);
 					printf("OPCAO: ");
 					fflush(stdin);
 					op = toupper(getch());
@@ -1801,7 +1964,7 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
         else
         {
             posCli = BuscaCPF(auxCPF, Cliente, TLC);
-            if (pos == -1)
+            if (posCli == -1)
             {
                 LimparMsg();
                 gotoxy(15, 26);
@@ -1859,6 +2022,8 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 						VendaProduto[TLVP].CodProd = Produto[posProd].CodProd;
 						VendaProduto[TLVP].ValorUnitario = Produto[posProd].Preco;
 						gotoxy(40, 13);
+						printf("                              ");
+						gotoxy(40, 13);
 						printf("Valor unitario: %.2f", VendaProduto[TLVP].ValorUnitario);
 				
 				        do
@@ -1889,26 +2054,22 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				                printf("Digite novamente a quantidade desejada. ");
 				                Sleep(1500);
 				            }
-				            else
-				            {
-				                // Atualiza o estoque do produto
-				                Produto[posProd].Estoque -= VendaProduto[TLVP].Qtde;
-				
-				                // Calcula o total da venda
-				                
-								totItem = VendaProduto[TLVP].Qtde * VendaProduto[TLVP].ValorUnitario;
-								Venda[TLV].TotVenda += totItem;
-								
-				                LimparMsg();
-				                gotoxy(15, 26);
-				                printf("Produto adicionado a venda com sucesso");
-				                Sleep(1500);
-				                
-				                
-				            }
-				            
 				        } while (VendaProduto[TLVP].Qtde > Produto[posProd].Estoque);
 				        
+				            
+		                // Atualiza o estoque do produto
+		                Produto[posProd].Estoque -= VendaProduto[TLVP].Qtde;
+		
+		                // Calcula o total da venda
+		                
+						totItem = VendaProduto[TLVP].Qtde * VendaProduto[TLVP].ValorUnitario;
+						Venda[TLV].TotVenda += totItem;
+						
+		                LimparMsg();
+		                gotoxy(15, 26);
+		                printf("Produto adicionado a venda com sucesso");
+		                Sleep(1500);
+				                
 				        TLVP++;
 				    }
 				
@@ -1921,6 +2082,11 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				Cliente[posCli].ValorTotComprado += Venda[TLV].TotVenda;
 				Cliente[posCli].QtdeCompras += 1;
 				TLV++;
+				LimparMsg();
+				gotoxy(15, 26);
+				printf("Gerando cupom fiscal...");
+				Sleep(2000);
+				CupomFiscal(Venda[TLV-1].CodVenda, Cliente, Venda, VendaProduto, Produto, TLC, TLV, TLVP, TLP);
 			}
 		}
 		LimparMsg();
@@ -1962,6 +2128,8 @@ void AumentarPreco(TpProdutos Produto[], int TLP, TpFornecedores Fornecedor[], i
     
     do
     {
+    	gotoxy(61, 10);
+    	printf("       ");
     	gotoxy(40, 10);
     	printf("Codigo do Fornecedor: ");
     	scanf("%d", &CodFornecedor);
@@ -2148,8 +2316,10 @@ char MenuExclusao(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	    gotoxy(8,11);
 		printf("[C] Excluir produto"); 
 		gotoxy(8,12);
+		printf("[D] Excluir venda"); 
+		gotoxy(8,13);
 		printf("[ESC] VOLTAR"); 
-		gotoxy(8,14);
+		gotoxy(8,15);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opExclusao = toupper(getch());
@@ -2161,8 +2331,8 @@ char MenuExclusao(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 						  break;
 				case 'C': ExcluiProdutos(Produto, TLP);
 						  break;
-//				case 'D': ExcluiVendas(Venda, VendaProd, TLV, TLVP);
-//						  break;	
+				case 'D': ExcluiVendas(Venda, VendaProd, Fornecedor, Produto, TLV, TLVP, TLF, TLP);
+						  break;	
 			}
 	}while(opExclusao!=27);
 }
@@ -2254,31 +2424,6 @@ void MoldPrincipal(void)
 	printf("Mensagem: ");
 };
 
-
-//void ExecutarMenus(void)
-//{
-//	char opcao;
-//	do
-//	{
-//		MoldPrincipal();
-//		opcao = Menu();
-//		switch(opcao)
-//		{
-//			case 'A': MenuCadastro( ,TLC);
-//					  break;
-//			case 'B': MenuConsulta();
-//					  break;
-//			case 'C': MenuAlteracao();
-//					  break;
-//			case 'D': MenuExclusao();
-//					  break;
-////			case 'G': FazerVenda();
-////					  break;
-//			case 'H': MenuRelatorios();
-//					  break;		
-//		}
-//	}while(opcao!=27);
-//}
 
 int main(void)
 {

@@ -1121,7 +1121,7 @@ void InserirDados(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	Produto[4].Preco = 18.60;
 	TLP++;
 	
-	Produto[5].CodProd = 118;
+	Produto[5].CodProd = 221;
 	Produto[5].CodForn = 11;
 	strcpy(Produto[5].Descr, "Banana");
 	Produto[5].DtValidade.Mes = 2;
@@ -1131,7 +1131,7 @@ void InserirDados(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	Produto[5].Preco = 5.50;
 	TLP++;
 	
-	Produto[6].CodProd = 118;
+	Produto[6].CodProd = 222;
 	Produto[6].CodForn = 11;
 	strcpy(Produto[6].Descr, "Goiabada");
 	Produto[6].DtValidade.Mes = 2;

@@ -714,23 +714,24 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF, TpProdutos Prod
 					gotoxy(42,26);
 					if (toupper(getche()) == 'S') {
 				    // Excluir elementos de Produto
-				
-				    for(i=0;i<TLP;i++)
-					{
-						if(Produto[i].CodForn == Fornecedor[pos].CodForn)
-						{
-							Produto[i]=Produto[i+1];
-							TLP--;
-						}
-					}
-					for(i=0;i<TLP;i++)
-					{
-						if(Produto[i].CodForn == Fornecedor[pos].CodForn)
-						{
-							Produto[i]=Produto[i+1];
-							TLP--;
-						}
-					}
+						
+						i = 0;
+				    	while (i < TLP)
+                        {
+                            if (Produto[i].CodForn == Fornecedor[pos].CodForn)
+                            {
+                                for (int j = i; j < TLP - 1; j++)
+                                {
+                                    Produto[j] = Produto[j + 1];
+                                }
+                                TLP--;
+                            }
+                            else
+                            {
+                                i++;
+                            }
+                        }
+
 						
 						for( ; pos < TLF - 1; pos++)
 							Fornecedor[pos] = Fornecedor[pos + 1];
@@ -738,7 +739,7 @@ void ExcluiFornecedores(TpFornecedores Fornecedor[TF], int &TLF, TpProdutos Prod
 						
 						LimparMsg();
 						gotoxy(15,26);
-						printf("Exclusao concluida! TLP: %d",TLP);
+						printf("Exclusao concluida!");
 						Sleep(1500);
 						LimparMsg();
 					}
@@ -1118,6 +1119,26 @@ void InserirDados(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	Produto[4].DtValidade.Dia = 5;
 	Produto[4].Estoque = 24;
 	Produto[4].Preco = 18.60;
+	TLP++;
+	
+	Produto[5].CodProd = 118;
+	Produto[5].CodForn = 11;
+	strcpy(Produto[5].Descr, "Banana");
+	Produto[5].DtValidade.Mes = 2;
+	Produto[5].DtValidade.Ano = 2026;
+	Produto[5].DtValidade.Dia = 5;
+	Produto[5].Estoque = 25;
+	Produto[5].Preco = 5.50;
+	TLP++;
+	
+	Produto[6].CodProd = 118;
+	Produto[6].CodForn = 11;
+	strcpy(Produto[6].Descr, "Goiabada");
+	Produto[6].DtValidade.Mes = 2;
+	Produto[6].DtValidade.Ano = 2026;
+	Produto[6].DtValidade.Dia = 5;
+	Produto[6].Estoque = 26;
+	Produto[6].Preco = 9.25;
 	TLP++;
 	
 
@@ -1569,7 +1590,7 @@ void CupomFiscal(int codVenda, TpClientes Cliente[], TpVendas Venda[], TpVendasP
 		LimparMsg();
 		linha = 7;
 	}
-	gotoxy(coluna, linha);
+	gotoxy(coluna, linha+1);
 	printf("TOTAL: R$%.2f",Venda[posVenda].TotVenda);
 	linha++;
 	if (linha >= linhaMaxima)
@@ -1583,7 +1604,7 @@ void CupomFiscal(int codVenda, TpClientes Cliente[], TpVendas Venda[], TpVendasP
 		LimparMsg();
 		linha = 7;
 	}
-	gotoxy(coluna, linha);
+	gotoxy(coluna, linha+2);
 	printf("Agradecemos a preferencia ;)");
 	Sleep(3000);
 }
@@ -1695,9 +1716,9 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
     do
     {
         LimparSaida();
-        gotoxy(43, 7);
+        gotoxy(43, 8);
         printf("### VENDA ###\n");
-        gotoxy(40, 9);
+        gotoxy(40, 10);
         printf("CPF do cliente (APENAS NUMEROS): ");
         fflush(stdin);
         gets(auxCPF);
@@ -1730,9 +1751,9 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
                 
                 do
 				{
-					gotoxy(58, 10);
+					gotoxy(58, 11);
 					printf("                 ");
-				    gotoxy(40, 10);
+				    gotoxy(40, 11);
 				    printf("Data(dd mm aaaa): ");
 				    scanf("%d%d%d", &Venda[TLV].DataVenda.Dia, &Venda[TLV].DataVenda.Mes, &Venda[TLV].DataVenda.Ano);
 				
@@ -1750,9 +1771,9 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				{
 					totItem = 0;
 					VendaProduto[TLVP].CodVenda = Venda[TLV].CodVenda;
-				    gotoxy(59, 12);
+				    gotoxy(59, 13);
 				    printf("                    ");
-				    gotoxy(40, 12);
+				    gotoxy(40, 13);
 				    printf("Codigo do produto: ");
 				    scanf("%d", &aux);
 				
@@ -1771,17 +1792,17 @@ void FazerVenda(TpVendas Venda[], int &TLV, TpClientes Cliente[], int TLC, TpVen
 				        // Copia o código do produto para a estrutura de venda do produto
 						VendaProduto[TLVP].CodProd = Produto[posProd].CodProd;
 						VendaProduto[TLVP].ValorUnitario = Produto[posProd].Preco;
-						gotoxy(40, 13);
+						gotoxy(40, 14);
 						printf("                              ");
-						gotoxy(40, 13);
+						gotoxy(40, 14);
 						printf("Valor unitario: %.2f", VendaProduto[TLVP].ValorUnitario);
 				
 				        do
 				        {
 				        	LimparMsg();
-				            gotoxy(50, 14);
+				            gotoxy(50, 15);
 				            printf("              ");
-				            gotoxy(40, 14);
+				            gotoxy(40, 15);
 				            printf("Quantidade: ");
 				            scanf("%d", &VendaProduto[TLVP].Qtde);
 				
@@ -1854,13 +1875,15 @@ void AumentarPreco(TpProdutos Produto[], int TLP, TpFornecedores Fornecedor[], i
 	int pos,percentualAumento;
 	
 	LimparSaida();
-    gotoxy(43, 7);
+    gotoxy(43, 8);
+    textcolor(10);
     printf("### AUMENTO DE PRECO ###\n");
-    
+    textcolor(7);
     do {
-    	gotoxy(72, 9);
+    	fflush(stdin);
+    	gotoxy(72, 10);
 		printf("    ");
-    	gotoxy(40, 9);
+    	gotoxy(40, 10);
         printf("Percentual de aumento(inteiro): ");
         scanf("%f", &aux);
         
@@ -1878,9 +1901,9 @@ void AumentarPreco(TpProdutos Produto[], int TLP, TpFornecedores Fornecedor[], i
     
     do
     {
-    	gotoxy(61, 10);
+    	gotoxy(61, 11);
     	printf("       ");
-    	gotoxy(40, 10);
+    	gotoxy(40, 11);
     	printf("Codigo do Fornecedor: ");
     	scanf("%d", &CodFornecedor);
     	pos = BuscaCod(CodFornecedor, Fornecedor, TLF);
@@ -2167,8 +2190,10 @@ char Menu(void)
 	LimparMsg();
 	LimparSaida();
 	gotoxy(8,8);
+	textcolor(10);
 	printf("###  M E N U  ###");
 	gotoxy(8,10);
+	textcolor(7);
 	printf("[A] Fazer cadastro");
 	gotoxy(8,11);
 	printf("[B] Fazer consulta");
@@ -2202,17 +2227,19 @@ char MenuCadastro(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	
 	do
 	{
-		gotoxy(8,7);
+		gotoxy(8,8);
+		textcolor(10);
 		printf("### CADASTRO ###");
-		gotoxy(8,9);
-		printf("[A] Cadastrar cliente"); 
 		gotoxy(8,10);
+		textcolor(7);
+		printf("[A] Cadastrar cliente"); 
+		gotoxy(8,11);
 		printf("[B] Cadastrar fornecedor"); 
-	    gotoxy(8,11);
+	    gotoxy(8,12);
 		printf("[C] Cadastrar produto"); 
-		gotoxy(8,12);
+		gotoxy(8,13);
 		printf("[ESC] VOLTAR"); 
-		gotoxy(8,14);
+		gotoxy(8,15);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opCadastro = toupper(getch());
@@ -2235,17 +2262,19 @@ char MenuConsulta(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	char opConsulta;
 	do
 	{
-		gotoxy(8,7);
+		gotoxy(8,8);
+		textcolor(10);
 		printf("### CONSULTA ###");
-		gotoxy(8,9);
-		printf("[A] Consultar cliente"); 
 		gotoxy(8,10);
+		textcolor(7);
+		printf("[A] Consultar cliente"); 
+		gotoxy(8,11);
 		printf("[B] Consultar fornecedor"); 
-	    gotoxy(8,11);
+	    gotoxy(8,12);
 		printf("[C] Consultar produto"); 
-		gotoxy(8,12);
+		gotoxy(8,13);
 		printf("[ESC] VOLTAR"); 
-		gotoxy(8,14);
+		gotoxy(8,15);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opConsulta = toupper(getch());
@@ -2269,17 +2298,19 @@ char MenuAlteracao(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos
 	
 	do
 	{
-		gotoxy(8,7);
+		gotoxy(8,8);
+		textcolor(10);
 		printf("### ALTERACAO ###");
-		gotoxy(8,9);
-		printf("[A] Alterar cliente"); 
 		gotoxy(8,10);
+		textcolor(7);
+		printf("[A] Alterar cliente"); 
+		gotoxy(8,11);
 		printf("[B] Alterar fornecedor"); 
-	    gotoxy(8,11);
+	    gotoxy(8,12);
 		printf("[C] Alterar produto"); 
-		gotoxy(8,12);
+		gotoxy(8,13);
 		printf("[ESC] VOLTAR"); 
-		gotoxy(8,14);
+		gotoxy(8,15);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opAlteracao = toupper(getch());
@@ -2303,19 +2334,21 @@ char MenuExclusao(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProdutos 
 	
 	do
 	{
-		gotoxy(8,7);
+		gotoxy(8,8);
+		textcolor(10);
 		printf("### EXCLUSAO ###");
-		gotoxy(8,9);
-		printf("[A] Excluir cliente"); 
 		gotoxy(8,10);
+		textcolor(7);
+		printf("[A] Excluir cliente"); 
+		gotoxy(8,11);
 		printf("[B] Excluir fornecedor"); 
-	    gotoxy(8,11);
+	    gotoxy(8,12);
 		printf("[C] Excluir produto"); 
-		gotoxy(8,12);
-		printf("[D] Excluir venda"); 
 		gotoxy(8,13);
+		printf("[D] Excluir venda"); 
+		gotoxy(8,14);
 		printf("[ESC] VOLTAR"); 
-		gotoxy(8,15);
+		gotoxy(8,16);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opExclusao = toupper(getch());
@@ -2341,19 +2374,21 @@ char MenuRelatorios(TpClientes Cliente[], TpFornecedores Fornecedor[], TpProduto
 	
 	do
 	{
-		gotoxy(8,7);
+		gotoxy(8,8);
+		textcolor(10);
 		printf("### RELATORIO ###");
-		gotoxy(8,9);
-		printf("[A] Relatorio clientes"); 
 		gotoxy(8,10);
+		textcolor(7);
+		printf("[A] Relatorio clientes"); 
+		gotoxy(8,11);
 		printf("[B] Relatorio fornecedores"); 
-	    gotoxy(8,11);
+	    gotoxy(8,12);
 		printf("[C] Relatorio produtos"); 
-		gotoxy(8,12);
-		printf("[D] Relatorio de vendas"); 
 		gotoxy(8,13);
-		printf("[ESC] VOLTAR"); 
+		printf("[D] Relatorio de vendas"); 
 		gotoxy(8,14);
+		printf("[ESC] VOLTAR"); 
+		gotoxy(8,16);
 		printf("Opcao desejada: ");
 		fflush(stdin);
 		opRelatorio = toupper(getch());
@@ -2406,15 +2441,15 @@ void Moldura(int CI, int LI, int CF, int LF, int cor)
 void MoldPrincipal(void)
 {
 	clrscr();
-	Moldura(1,1,90,30,6); // MOLDURA DE FORA
-    Moldura(3,2,85,4,5); // MOLDURA TÍTULO
+	Moldura(1,1,90,30,5); // MOLDURA DE FORA
+    Moldura(3,2,85,4,10); // MOLDURA TÍTULO
     
 	
 	gotoxy(19,3);
 	printf("###  S I S T E M A   D E   V E N D A S  ###");
 	Moldura(3,6,35,22,5); // MOLDURA MENU
 	Moldura(36,6,88,22,5); // MOLDURA SAÍDA
-	Moldura(3,24,88,28,5); // MOLDURA MENSAGEM
+	Moldura(3,24,88,28,10); // MOLDURA MENSAGEM
 	
 	gotoxy(5,26);
 	printf("Mensagem: ");
